@@ -11,6 +11,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UserSeeder::class);
+         DB::table('public')->insert([
+                  'id' => '1',
+                  'status' => 'public',
+         ]);
+         DB::table('public')->insert([
+                  'id' => '2',
+                  'status' => 'private',
+         ]);
     }
 }
