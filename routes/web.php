@@ -13,8 +13,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+//Route::get('/', function () {
+//    return view('welcome');
+//});
+
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/tasks');
 });
 
 Auth::routes();
@@ -32,4 +36,9 @@ Route::get('/addtaskurl','taskControler@display');
 Route::get('/show','taskControler@show');
 
 Route::get('/deletetaskurl','taskControler@show');
+
+Route::any('/search','taskControler@search');
+
+Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
+
 

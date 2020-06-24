@@ -5,6 +5,7 @@ use App\task;
 use App\Keyword;
 use App\Calendar;
 use App\Publics;
+use App\User;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,22 +19,33 @@ class taskControler extends Controller
      */
     public function index()
     {
-        if (Auth::check()){
         $user = Auth::user();
         $keywords = Keyword::all();
         $publics = Publics::all();
         $task = [];
 
-        $filter = '';
-        $selectparams = array($user->id);
-        if ($_GET['keyword']) {
-            $filter = " AND k.name=?";
+        $where = 'WHERE ';
+        $selectparams = array();
+        $filter = array();
+        if ($user) {
+            $selectparams[] = $user->id;
+            $filter[] = 'c.user_id=?';
+        }
+        if (array_key_exists('keyword', $_GET) && $_GET['keyword']) {
             $selectparams[] = $_GET['keyword']; 
-        } 
+            $filter[] = 'k.name=?';
+        }
+	else {
+	    $where = "WHERE p.status='public' ";
+	}
+        if ($filter) {
+            $where = ' WHERE (' . implode(' AND ', $filter) . ')';
+        }
+
         $tasks = DB::select("SELECT t.* FROM tasks t 
             INNER JOIN calendars c ON t.id=c.tasks_id 
-            INNER JOIN keywords k ON c.keywords_id=k.id 
-            WHERE c.user_id=?" . $filter, $selectparams);
+            INNER JOIN keywords k ON c.keywords_id=k.id
+            INNER JOIN public p ON k.public=p.id  " . $where, $selectparams);
 
         foreach($tasks as $row){
         $enddate = $row->end_date." 24:00:00";
@@ -50,36 +62,28 @@ class taskControler extends Controller
         }
         $calendar = \Calendar::addEvents($task);
         return view('taskpage', ['keywords'=>$keywords, 'publics'=>$publics], compact('tasks','calendar'));
-        }
-        else{
-        $user = Auth::user();
-        $keywords = Keyword::all();
-        $publics = Publics::all();
-        $task = [];
-
-        $tasks = task::all();
-
-        foreach($tasks as $row){
-        $enddate = $row->end_date." 24:00:00";
-            $task[] = \Calendar::Event(
-            $row->title,
-            false,
-            new \DateTime($row->start_date),
-            new \DateTime($row->end_date),
-            $row->id,
-            [
-               'color' => $row->color,
-            ]
-            );
-        }
-        $calendar = \Calendar::addEvents($task);
-        return view('taskpage', ['keywords'=>$keywords, 'publics'=>$publics], compact('tasks','calendar'));
-        }
     }
     public function display(){
         $keywords = Keyword::all();
         $publics = Publics::all();
         return view('addtask', ['keywords'=>$keywords, 'publics'=>$publics]);
+    }
+    
+    public function search(Request $request){
+        $search = $request->input('q');
+        if ($search) {
+            $where = " AND k.name LIKE :search";
+            $params = array(':search' => '%' . $search . '%');
+        }
+        else {
+            $where = '';
+            $params = array();
+        }
+        $keywords = DB::select("SELECT k.name,k.color,u.username FROM keywords k 
+            INNER JOIN users u ON k.user_id=u.id
+            INNER JOIN public p ON k.public=p.id WHERE p.status='public'" . $where, $params);
+
+        return view('search', ['keywords'=>$keywords, 'search' => $search]);
     }
 
     /**

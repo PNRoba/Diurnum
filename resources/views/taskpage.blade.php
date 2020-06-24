@@ -20,15 +20,17 @@
                 @if(Auth::check())
                 <a href="/addtaskurl" class="btn btn-success">Add Task</a>
                 <a href="/show" class="btn btn-primary">Edit Task</a>
+                <a href="/search" class="btn btn-primary">Search for Keywords</a>
                 <a href="/logout" class="btn btn-primary" style="float:right;">Log out</a>       
                 @endif
+                
                 @if(!Auth::check())
+                <a href="/search" class="btn btn-primary">Search for Keywords</a>
                 <a href="/login" class="btn btn-primary" style="float:right; margin-right: 4px;">Log in</a>
                 <a href="/register" class="btn btn-primary" style="float:right; margin-right: 4px;">Sign up</a>
                 @endif
             </div>
             <br>
-            <div class="row">
                 @if(count($errors)>0)
                   <div class="alert alert-danger">
                     <ul>
@@ -50,7 +52,7 @@
                         <p>{{\Session::get('error')}}</p>
                     </div>
                 @endif
-                
+            <div class="row">
                 <div class="col-md-8 col-md-offset-2">
                     <div class="panel panel-default">
                         <div class="panel-heading" style="background: #832648; color: white; padding: 10px;">
@@ -60,6 +62,7 @@
                             {!! $calendar->calendar() !!}
                             {!! $calendar->script() !!}
                         </div>
+                        @if(Auth::check())  
                         <div class="panel-heading" style="background: #832648; color: white; padding: 10px;">
                             Keywords
                         </div>
@@ -69,17 +72,22 @@
                             <tr><th style="border:1px solid black;"> Keyword </th>
                             <th style="border:1px solid black;"> Color </th>
                             </thead>
-                            <tbody>  
+                            <tbody>
+                            
                             @foreach($keywords as $keyword)
                                 @if($keyword->user_id == Auth::user()->id)
-                                    <tr><td style="border:1px solid black;">{{ $keyword->name }}</td>
+                                    <tr><td style="border:1px solid black;"><a href="/tasks?keyword={{ $keyword->name }}">{{ $keyword->name }}</a></td>
                                     <td style="background-color: {{ $keyword->color }} ; border:1px solid black;">{{ $keyword->color }}</td>
                                     </tr>
                                 @endif    
                             @endforeach
+                            <tr><td style="border:1px solid black;"><a href="/tasks">ALL</a></td>
+                            <td style="border:1px solid black;"></td>
+                            </tr>
                             </tbody>
                             </table>
                         </div>
+                        @endif
                     </div>
                 </div>
             </div>

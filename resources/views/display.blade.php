@@ -17,7 +17,7 @@
                             <th> ID </th>
                             <th> Name </th>
                             <th> Keyword </th>
-                            <th> Keyword </th>
+                            <th> Color </th>
                             <th> Start date </th>
                             <th> End date</th>
                             <th> Update </th>
@@ -37,7 +37,11 @@
                                 @endif    
                             @endforeach
                             </td>
-                            <td style="background-color: {{ $keyword->color }};">{{$task->color}}</td>
+                            @foreach($keywords as $keyword)
+                                @if($keyword->user_id == Auth::user()->id && $keyword->color == $task->color)
+                                    <td style="background-color: {{ $keyword->color }};">{{$task->color}}</td>
+                                @endif    
+                            @endforeach
                             <td>{{$task->start_date}}</td>
                             <td>{{$task->end_date}}</td>
                             <th>
