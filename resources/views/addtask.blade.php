@@ -38,6 +38,7 @@
                             <h1>Task: Add Data</h1>
                             <form method="POST" action="{{action('taskControler@store')}}">
                             {{ csrf_field() }}
+
                             <p>Please select:</p>
                             <input type="radio" id="exists" value="exists" onclick="javascript:yesnoCheck();" name="key">
                             <label for="exists">Select Existing Keyword</label><br>

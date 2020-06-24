@@ -7,6 +7,7 @@ use App\Calendar;
 use App\Publics;
 use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class taskControler extends Controller
 {
@@ -17,8 +18,23 @@ class taskControler extends Controller
      */
     public function index()
     {
-        $tasks = task::all();
+        if (Auth::check()){
+        $user = Auth::user();
+        $keywords = Keyword::all();
+        $publics = Publics::all();
         $task = [];
+
+        $filter = '';
+        $selectparams = array($user->id);
+        if ($_GET['keyword']) {
+            $filter = " AND k.name=?";
+            $selectparams[] = $_GET['keyword']; 
+        } 
+        $tasks = DB::select("SELECT t.* FROM tasks t 
+            INNER JOIN calendars c ON t.id=c.tasks_id 
+            INNER JOIN keywords k ON c.keywords_id=k.id 
+            WHERE c.user_id=?" . $filter, $selectparams);
+
         foreach($tasks as $row){
         $enddate = $row->end_date." 24:00:00";
             $task[] = \Calendar::Event(
@@ -28,12 +44,37 @@ class taskControler extends Controller
             new \DateTime($row->end_date),
             $row->id,
             [
-                'color' => $row->color,
+               'color' => $row->color,
             ]
             );
         }
         $calendar = \Calendar::addEvents($task);
-        return view('taskpage', compact('tasks','calendar'));
+        return view('taskpage', ['keywords'=>$keywords, 'publics'=>$publics], compact('tasks','calendar'));
+        }
+        else{
+        $user = Auth::user();
+        $keywords = Keyword::all();
+        $publics = Publics::all();
+        $task = [];
+
+        $tasks = task::all();
+
+        foreach($tasks as $row){
+        $enddate = $row->end_date." 24:00:00";
+            $task[] = \Calendar::Event(
+            $row->title,
+            false,
+            new \DateTime($row->start_date),
+            new \DateTime($row->end_date),
+            $row->id,
+            [
+               'color' => $row->color,
+            ]
+            );
+        }
+        $calendar = \Calendar::addEvents($task);
+        return view('taskpage', ['keywords'=>$keywords, 'publics'=>$publics], compact('tasks','calendar'));
+        }
     }
     public function display(){
         $keywords = Keyword::all();
@@ -67,7 +108,8 @@ class taskControler extends Controller
                 'start_date' => 'required',
                 'end_date' => 'required'
             ]);
-            if($request->get('new', 1)){
+
+            if($request->input('key')=='new'){
                 $tasks = new task;
                 $tasks->title = $request->input('title');
                 $tasks->color = $request->input('color');
@@ -90,7 +132,7 @@ class taskControler extends Controller
                 $calendars->tasks_id = $task->id;
                 $calendars->save();
             }
-            elseif($request->get('exists', 1)){
+            elseif($request->input('key')=='exists'){
                 $tasks = new task;
                 $tasks->title = $request->input('title');
                 
@@ -110,7 +152,7 @@ class taskControler extends Controller
                 
                 $calendars = new Calendar;
                 $calendars->user_id = $request->input('user_id');
-                $calendars->keywords_id = $keyword_id->id;
+                $calendars->keywords_id = $keyword_id;
                 $calendars->tasks_id = $task->id;
                 $calendars->save();
             }
@@ -131,8 +173,10 @@ class taskControler extends Controller
     public function show()
     {
         if (Auth::check()){
-            $tasks = task::all();
-            return view('display')->with('tasks', $tasks);
+            $user = Auth::user();
+            $keywords = Keyword::all();
+            $tasks = \DB::select('SELECT t.* FROM tasks t INNER JOIN calendars c ON t.id=c.tasks_id WHERE user_id=?', array($user->id));
+            return view('display',['keywords'=>$keywords, 'tasks'=>$tasks]);
         }
     }
 
@@ -178,14 +222,55 @@ class taskControler extends Controller
             'start_date' => 'required',
             'end_date' => 'required'
         ]);
-        $tasks = task::find($id);
-        $tasks->title = $request->input('title');
-        $color = $tasks->color;
-        $tasks->color = $request->input('color');
-        $tasks->start_date = $request->input('start_date');
-        $tasks->end_date = $request->input('end_date');
-        $tasks->save();
-        
+        $user = Auth::user();
+        if($request->input('key')=='new'){
+                $tasks = task::find($id);
+                $tasks->title = $request->input('title');
+                
+                $tasks->color = $request->input('color');
+                
+                $tasks->start_date = $request->input('start_date');
+                $tasks->end_date = $request->input('end_date');
+                
+                $tasks->save();
+                $keywords = new Keyword;
+                $keywords->name = $request->input('name2');
+                $keywords->color = $request->input('color');
+                $keywords->public = $request->input('public');
+                $keywords->user_id = $request->input('user_id');
+                $keywords->save();
+                
+                $task = task::all()->sortByDesc('id')->first();
+                $keyword = Keyword::all()->sortByDesc('id')->first();
+                
+                $calendars = Calendar::where('tasks_id', $id)->first();
+                $calendars->user_id = $user->id;
+                $calendars->keywords_id = $keyword->id;
+                $calendars->save();
+            }
+            elseif($request->input('key')=='exists'){
+                $tasks = task::find($id);
+                $tasks->title = $request->input('title');
+                
+                $keywords = Keyword::all();
+                foreach($keywords as $keyword){
+                    if($request->get('name1') == $keyword->name){
+                        $tasks->color = $keyword->color;
+                        $keyword_id = $keyword->id;
+                    }
+                }
+                
+                $tasks->start_date = $request->input('start_date');
+                $tasks->end_date = $request->input('end_date');
+                $tasks->save();               
+                
+                $task = task::all()->sortByDesc('id')->first();
+                
+                $calendars = Calendar::where('tasks_id', $id)->first();
+                $calendars->user_id = $user->id;
+                $calendars->keywords_id = $keyword_id;
+                $calendars->save();
+            }
         
         return redirect('tasks')->with('success','Task Updated');
     }
@@ -202,8 +287,15 @@ class taskControler extends Controller
         {
             $tasks = task::find($id);
             $tasks->delete();
-            
-            return redirect('edittask')->with('success','Task Deleted');         
+            $calendars = Calendar::where('tasks_id', $id)->first();
+            $keyid = $calendars->keywords_id;
+            $calendars->delete();
+            $keywordslist=Calendar::where('keywords_id', $keyid)->get();
+            if($keywordslist->count()==0){
+                $keyword = Keyword::find($keyid);
+                $keyword->delete();
+            }
+            return redirect('/show')->with('success','Task Deleted');         
         }
         else
         {

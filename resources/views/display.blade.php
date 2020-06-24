@@ -16,7 +16,8 @@
                         <tr class="warning">
                             <th> ID </th>
                             <th> Name </th>
-                            <th> Color </th>
+                            <th> Keyword </th>
+                            <th> Keyword </th>
                             <th> Start date </th>
                             <th> End date</th>
                             <th> Update </th>
@@ -24,20 +25,28 @@
                         </tr>
                     </thead>
                     @foreach($tasks as $task)
+
                     <tbody>
                         <tr>
                             <td>{{$task->id}}</td>
                             <td>{{$task->title}}</td>
-                            <td>{{$task->color}}</td>
+                            <td>
+                            @foreach($keywords as $keyword)
+                                @if($keyword->user_id == Auth::user()->id && $keyword->color == $task->color)
+                                    {{ $keyword->name }}
+                                @endif    
+                            @endforeach
+                            </td>
+                            <td style="background-color: {{ $keyword->color }};">{{$task->color}}</td>
                             <td>{{$task->start_date}}</td>
                             <td>{{$task->end_date}}</td>
                             <th>
-                                <a href="{{action('taskControler@edit', $task['id'])}}" class="btn btn-success">
+                                <a href="{{action('taskControler@edit', $task->id)}}" class="btn btn-success">
                                     <i class="glyphicon glyphicon-edit"></i> Edit
                                 </a>
                             </th>
                             <th>
-                            <form method="POST" action="{{action('taskControler@destroy', $task['id'])}}">
+                            <form method="POST" action="{{action('taskControler@destroy', $task->id)}}">
                                 {{ csrf_field() }}
                                 <input type="hidden" name="_method" value="Delete">
                                 <button type="submit" class="btn btn-danger">
@@ -47,6 +56,7 @@
                             </th>
                         </tr>
                     </tbody>
+                    
                     @endforeach
                 </table>
                 <a href="/tasks" class="btn btn-danger">Back</a>    
