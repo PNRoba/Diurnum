@@ -39,13 +39,9 @@
                             <td style="background-color: {{ $keyword->color }};">{{$keyword->color}}</td>
                                     <td>{{ $keyword->username }}</td>
                             <td>
-                            <form method="POST" action="">
-                                {{ csrf_field() }}
-                                <input type="hidden" name="_method" value="View">
-                                <button type="submit" class="btn btn-primary">
+                                <a href="/tasks?keyword={{ $keyword->name }}" class="btn btn-success">
                                     View
-                                </button>
-                            </form>
+                                </a>
                             </td>
                         </tr>
                     </tbody>

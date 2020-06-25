@@ -24,28 +24,27 @@ class taskControler extends Controller
         $publics = Publics::all();
         $task = [];
 
-        $where = 'WHERE ';
         $selectparams = array();
         $filter = array();
         if ($user) {
-            $selectparams[] = $user->id;
-            $filter[] = 'c.user_id=?';
+            $selectparams[':user_id'] = $user->id;
         }
+        else {
+            $selectparams[':user_id'] = 0;
+        }
+
         if (array_key_exists('keyword', $_GET) && $_GET['keyword']) {
-            $selectparams[] = $_GET['keyword']; 
-            $filter[] = 'k.name=?';
+            $selectparams[':keyword'] = $_GET['keyword']; 
+            $filter[] = "k.name=:keyword AND (p.status='public' OR c.user_id=:user_id)";
         }
-	else {
-	    $where = "WHERE p.status='public' ";
-	}
-        if ($filter) {
-            $where = ' WHERE (' . implode(' AND ', $filter) . ')';
+        else {
+            $filter[] = "c.user_id=:user_id";
         }
 
         $tasks = DB::select("SELECT t.* FROM tasks t 
             INNER JOIN calendars c ON t.id=c.tasks_id 
             INNER JOIN keywords k ON c.keywords_id=k.id
-            INNER JOIN public p ON k.public=p.id  " . $where, $selectparams);
+            INNER JOIN public p ON k.public=p.id WHERE " . implode(' AND ', $filter), $selectparams);
 
         foreach($tasks as $row){
         $enddate = $row->end_date." 24:00:00";
@@ -63,6 +62,7 @@ class taskControler extends Controller
         $calendar = \Calendar::addEvents($task);
         return view('taskpage', ['keywords'=>$keywords, 'publics'=>$publics], compact('tasks','calendar'));
     }
+    
     public function display(){
         $keywords = Keyword::all();
         $publics = Publics::all();
@@ -79,7 +79,7 @@ class taskControler extends Controller
             $where = '';
             $params = array();
         }
-        $keywords = DB::select("SELECT k.name,k.color,u.username FROM keywords k 
+        $keywords = DB::select("SELECT k.id,k.name,k.color,u.username FROM keywords k 
             INNER JOIN users u ON k.user_id=u.id
             INNER JOIN public p ON k.public=p.id WHERE p.status='public'" . $where, $params);
 

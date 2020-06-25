@@ -39,6 +39,20 @@ Route::get('/deletetaskurl','taskControler@show');
 
 Route::any('/search','taskControler@search');
 
+Route::resource('/show','KeywordController');
+
+//Route::any('/search','taskControler@search');
+
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 
 
+
+/*
+Route::resource('photos', 'PhotoController')->only([
+    'index', 'show'
+]);
+
+Route::resource('photos', 'PhotoController')->except([
+    'create', 'store', 'update', 'destroy'
+]);
+*/
