@@ -14,14 +14,14 @@
                 <table class="table table-striped table-bordered table-hover">
                     <thead class="thead">
                         <tr class="warning">
-                            <th> ID </th>
-                            <th> Name </th>
-                            <th> Keyword </th>
-                            <th> Color </th>
-                            <th> Start date </th>
-                            <th> End date</th>
-                            <th> Update </th>
-                            <th> Delete </th>
+                            <th> {{ __('messages.ID') }} </th>
+                            <th> {{ __('messages.Name') }} </th>
+                            <th> {{ __('messages.Keyword') }} </th>
+                            <th> {{ __('messages.Color') }} </th>
+                            <th> {{ __('messages.Start_date') }} </th>
+                            <th> {{ __('messages.End_date') }}</th>
+                            <th> {{ __('messages.Update') }} </th>
+                            <th> {{ __('messages.Delete') }} </th>
                         </tr>
                     </thead>
                     @foreach($tasks as $task)
@@ -46,7 +46,7 @@
                             <td>{{$task->end_date}}</td>
                             <th>
                                 <a href="{{action('taskControler@edit', $task->id)}}" class="btn btn-success">
-                                    <i class="glyphicon glyphicon-edit"></i> Edit
+                                    <i class="glyphicon glyphicon-edit"></i> {{ __('messages.Edit') }}
                                 </a>
                             </th>
                             <th>
@@ -54,7 +54,7 @@
                                 {{ csrf_field() }}
                                 <input type="hidden" name="_method" value="Delete">
                                 <button type="submit" class="btn btn-danger">
-                                    <i class="glyphicon glyphicon-edit"></i> Delete
+                                    <i class="glyphicon glyphicon-edit"></i> {{ __('messages.Delete') }}
                                 </button>
                             </form>
                             </th>
@@ -63,7 +63,7 @@
                     
                     @endforeach
                 </table>
-                <a href="/tasks" class="btn btn-danger">Back</a>    
+                <a href="/tasks" class="btn btn-danger">{{ __('messages.Back') }}</a>    
             </div>
         </div>
 </body>

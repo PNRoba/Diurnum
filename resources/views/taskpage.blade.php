@@ -18,17 +18,22 @@
         <div class="container">
             <div class="row">
                 @if(Auth::check())
-                <a href="/addtaskurl" class="btn btn-success">Add Task</a>
-                <a href="/show" class="btn btn-primary">Edit Task</a>
-                <a href="/search" class="btn btn-primary">Search for Keywords</a>
-                <a href="/logout" class="btn btn-primary" style="float:right;">Log out</a>       
+                <a href="/addtaskurl" class="btn btn-success">{{ __('messages.Add_Task') }}</a>
+                <a href="/show" class="btn btn-primary">{{ __('messages.Edit_Task') }}</a>
+                <a href="/search" class="btn btn-primary">{{ __('messages.Search_for_keywords') }}</a>
+                <a href="/logout" class="btn btn-primary" style="float:right;">{{ __('messages.Log_out') }}</a>       
                 @endif
                 
                 @if(!Auth::check())
-                <a href="/search" class="btn btn-primary">Search for Keywords</a>
-                <a href="/login" class="btn btn-primary" style="float:right; margin-right: 4px;">Log in</a>
-                <a href="/register" class="btn btn-primary" style="float:right; margin-right: 4px;">Sign up</a>
+                <a href="/search" class="btn btn-primary">{{ __('messages.Search_for_keywords') }}</a>
+                <a href="/login" class="btn btn-primary" style="float:right; margin-right: 4px;">{{ __('messages.Log_in') }}</a>
+                <a href="/register" class="btn btn-primary" style="float:right; margin-right: 4px;">{{ __('messages.Sign_up') }}</a>
                 @endif
+
+
+                <a href="/lang/lv" class="btn" style="float:right; margin-right: 4px;">LV</a>
+                <a href="/lang/en" class="btn" style="float:right; margin-right: 4px;">EN</a>
+
             </div>
             <br>
                 @if(count($errors)>0)
@@ -81,7 +86,7 @@
                                     </tr>
                                 @endif    
                             @endforeach
-                            <tr><td style="border:1px solid black;"><a href="/tasks">ALL</a></td>
+                            <tr><td style="border:1px solid black;"><a href="/tasks">{{ __('messages.ALL') }}</a></td>
                             <td style="border:1px solid black;"></td>
                             </tr>
                             </tbody>

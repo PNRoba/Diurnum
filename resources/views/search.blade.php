@@ -15,8 +15,8 @@
                 {{ csrf_field() }}
                 <div class="input-group">
                     <input type="text" class="form-control" name="q" value="{{ $search }}"
-                        placeholder="Search keywords"> <span class="input-group-btn">
-                        <input type="submit" name="submit" class="btn btn-primary" value="Search">
+                        placeholder="{{ __('messages.Search_for_keywords') }}"> <span class="input-group-btn">
+                        <input type="submit" name="submit" class="btn btn-primary" value="{{ __('messages.Search') }}">
                     </span>
                 </div>
             </form>
@@ -25,10 +25,10 @@
                 <table class="table table-striped table-bordered table-hover">
                     <thead class="thead">
                         <tr class="warning">
-                            <th> Keyword </th>
-                            <th> Color </th>
-                            <th> Created by </th>
-                            <th> View </th>
+                            <th> {{ __('messages.Keyword') }} </th>
+                            <th> {{ __('messages.Color') }} </th>
+                            <th> {{ __('messages.Created_by') }} </th>
+                            <th> {{ __('messages.View') }} </th>
                         </tr>
                     </thead>
                     @foreach($keywords as $keyword)
@@ -40,7 +40,7 @@
                                     <td>{{ $keyword->username }}</td>
                             <td>
                                 <a href="/tasks?keyword={{ $keyword->name }}" class="btn btn-success">
-                                    View
+                                    {{ __('messages.View') }}
                                 </a>
                             </td>
                         </tr>
@@ -48,7 +48,7 @@
                     
                     @endforeach
                 </table>
-                <a href="/tasks" class="btn btn-danger">Back</a>    
+                <a href="/tasks" class="btn btn-danger">{{ __('messages.Back') }}</a>    
             </div>
         </div>
 </body>

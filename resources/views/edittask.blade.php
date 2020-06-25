@@ -33,23 +33,23 @@
 
         <div class="container">
             <div class="jumbotron" style="margin-top: 5%;">
-                <h1>Name of Task</h1>
+                <h1>{{$tasks->title}}</h1>
                 <hr>
                     <input type="hidden" name="_method" value="Update">    
             </div>
             <div class="form-group">
                 <p>Select:</p>
                 <input type="radio" id="exists" value="exists" onclick="javascript:yesnoCheck();" name="key">
-                <label for="exists">Select Existing Keyword</label><br>
+                <label for="exists">{{ __('messages.Select_Existing_Keyword') }}</label><br>
                 <input type="radio" id="new" value="new" onclick="javascript:yesnoCheck();" name="key">
-                <label for="new">Create New Keyword</label><br>
+                <label for="new">{{ __('messages.Create_New_Keyword') }}</label><br>
             </div>
             <div class="form-group">
-                <label for="">Enter Task Name</label>
-                <input type="text" class="form-control" name="title" placeholder="Name of the task" value="{{$tasks->title}}">               
+                <label for="">{{ __('messages.Enter_Task_Name') }}</label>
+                <input type="text" class="form-control" name="title" placeholder="{{ __('messages.Enter_Task_Name') }}" value="{{$tasks->title}}">               
             </div>
             <div id="ifYes">
-                <label for="">Select Existing Keyword</label>
+                <label for="">{{ __('messages.Select_Existing_Keyword') }}</label>
                 <select class="form-control" name="name1" id="name1">
                 <option value="{{ $keyid->name }}" style="background:{{ $keyid->color }}">{{ $keyid->name }}</option>
                 @foreach($keywords as $keyword)
@@ -61,10 +61,10 @@
             </div>
                             
             <div id="ifNo">
-                <label for="">Enter New Keyword</label>
-                <input type="text" class="form-control" name="name2" id="name2" placeholder="Enter Keyword"><br>
+                <label for="">{{ __('messages.Create_New_Keyword') }}</label>
+                <input type="text" class="form-control" name="name2" id="name2" placeholder="{{ __('messages.Create_New_Keyword') }}"><br>
                 <select class="form-control" name="public">
-                <option value="">None</option>
+                <option value=""></option>
                 @foreach($publics as $public){
                     <option value="{{ $public->id }}">{{ $public->status }}</option> 
                 @endforeach
@@ -73,16 +73,16 @@
             </div>
                             
             <div class="form-group">
-                <label for="">Enter Start Date</label>
-                <input type="datetime-local" class="form-control" name="start_date" class="date" placeholder="Enter start date" value="{{$tasks->start_date}}">
+                <label for="">{{ __('messages.Enter_Start_Date') }}</label>
+                <input type="datetime-local" class="form-control" name="start_date" class="date" value="{{$tasks->start_date}}">
             </div>
             <div class="form-group">
-                <label for="">Enter End Date</label>    
-                <input type="datetime-local" class="form-control" name="end_date" class="date" placeholder="Enter end date" value="{{$tasks->end_date}}">
+                <label for="">{{ __('messages.Enter_End_Date') }}</label>    
+                <input type="datetime-local" class="form-control" name="end_date" class="date" value="{{$tasks->end_date}}">
             </div>
             {{ method_field('PUT') }}
-                <button type="submit" name="submit" class="btn btn-primary">Update</button>
-                <a href="/tasks" class="btn btn-danger">Back</a>
+                <button type="submit" name="submit" class="btn btn-primary">{{ __('messages.Update') }}</button>
+                <a href="/tasks" class="btn btn-danger">{{ __('messages.Back') }}</a>
         </div>
     </form>
 </body>

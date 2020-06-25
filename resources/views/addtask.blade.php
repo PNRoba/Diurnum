@@ -41,16 +41,17 @@
 
                             <p>Please select:</p>
                             <input type="radio" id="exists" value="exists" onclick="javascript:yesnoCheck();" name="key">
-                            <label for="exists">Select Existing Keyword</label><br>
+                            <label for="exists">{{ __('messages.Select_Existing_Keyword') }}</label><br>
                             <input type="radio" id="new" value="new" onclick="javascript:yesnoCheck();" name="key">
-                            <label for="new">Create New Keyword</label><br>
+                            <label for="new">{{ __('messages.Create_New_Keyword') }}</label><br>
                             <input type="hidden" class="form-control" name="user_id" value="{{ Auth::user()->id }}">
-                            <label for="">Enter Task Name</label>
-                            <input type="text" class="form-control" name="title" placeholder="Name of the task"><br><br>
+                            <label for="">{{ __('messages.Enter_Task_Name') }}</label>
+                            <input type="text" class="form-control" name="title" placeholder="{{ __('messages.Enter_Task_Name') }}"><br><br>
                             
                             <div id="ifYes">
-                                <label for="">Select Existing Keyword</label>
+                                <label for="">{{ __('messages.Select_Existing_Keyword') }}</label>
                                 <select class="form-control" name="name1" id="name1">
+                                <option value=""></option>
                                 @foreach($keywords as $keyword)
                                     @if(Auth::user()->id == $keyword->user_id)
                                        <option value="{{ $keyword->name }}" >{{ $keyword->name }}</option>
@@ -63,10 +64,10 @@
                             </div>
                             
                             <div id="ifNo">
-                                <label for="">Enter New Keyword</label>
-                                <input type="text" class="form-control" name="name2" id="name2" placeholder="Enter Keyword"><br>
+                                <label for="">{{ __('messages.Create_New_Keyword') }}</label>
+                                <input type="text" class="form-control" name="name2" id="name2" placeholder="{{ __('messages.Create_New_Keyword') }}"><br>
                                 <select class="form-control" name="public">
-                                <option value="">None</option>
+                                <option value=""></option>
                                 @foreach($publics as $public){
                                     <option value="{{ $public->id }}">{{ $public->status }}</option> 
                                 @endforeach
@@ -74,12 +75,12 @@
                                 <input type="color" class="form-control" name="color" placeholder="Enter color"><br>
                             </div>
                             
-                            <label for="">Enter Start Date</label>
+                            <label for="">{{ __('messages.Enter_Start_Date') }}</label>
                             <input type="datetime-local" class="form-control" name="start_date" class="date" placeholder="Enter start date><br><br>
-                            <label for="">Enter End Date</label>
+                            <label for="">{{ __('messages.Enter_End_Date') }}</label>
                             <input type="datetime-local" class="form-control" name="end_date" class="date" placeholder="Enter end date"><br><br>
-                            <input type="submit" name="submit" class="btn btn-primary" value="Add">
-                            <a href="/tasks" class="btn btn-danger">Back</a>
+                            <input type="submit" name="submit" class="btn btn-primary" value="{{ __('messages.Add') }}">
+                            <a href="/tasks" class="btn btn-danger">{{ __('messages.Back') }}</a>
                             </form>
                         </div>
                     </div>
