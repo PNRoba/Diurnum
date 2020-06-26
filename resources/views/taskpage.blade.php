@@ -1,6 +1,12 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>Tasks</title>
     
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -61,7 +67,7 @@
                 <div class="col-md-8 col-md-offset-2">
                     <div class="panel panel-default">
                         <div class="panel-heading" style="background: #832648; color: white; padding: 10px;">
-                            Task Calendar
+                            {{ __('messages.Task_Calendar') }}
                         </div>
                         <div class="panel-body">
                             {!! $calendar->calendar() !!}

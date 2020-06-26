@@ -40,7 +40,6 @@ class taskControler extends Controller
         else {
             $filter[] = "c.user_id=:user_id";
         }
-
         $tasks = DB::select("SELECT t.* FROM tasks t 
             INNER JOIN calendars c ON t.id=c.tasks_id 
             INNER JOIN keywords k ON c.keywords_id=k.id

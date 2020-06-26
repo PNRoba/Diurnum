@@ -21,9 +21,10 @@ return [
     'Search_for_keywords' => 'Atslēgvārdu meklēšana',
     'Edit_Task' => 'Mainīt uzdevumu',
     'Add_Task' => 'Pievienot uzdevumu',
-    'Log_in' => 'Ienakt',
+    'Log_in' => 'Ienākt',
     'Log_out' => 'Iziet',
     'Sign_up' => 'Reģistrēties',
     'ALL' => 'VISS',
     'Search' => 'Meklēt',
+    'Task_Calendar' => 'Darbu kalendārs',
 ];

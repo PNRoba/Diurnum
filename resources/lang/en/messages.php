@@ -27,4 +27,5 @@ return [
     'Sign_up' => 'Sign up',
     'ALL' => 'ALL',
     'Search' => 'Search',
+    'Task_Calendar' => 'Task Calendar',
 ];
