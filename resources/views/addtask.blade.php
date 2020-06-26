@@ -82,7 +82,7 @@
                             </div>
                             
                             <label for="">{{ __('messages.Enter_Start_Date') }}</label>
-                            <input type="datetime-local" class="form-control" name="start_date" class="date" placeholder="Enter start" date><br><br>
+                            <input type="datetime-local" class="form-control" name="start_date" class="date" placeholder="Enter start date"><br><br>
                             <label for="">{{ __('messages.Enter_End_Date') }}</label>
                             <input type="datetime-local" class="form-control" name="end_date" class="date" placeholder="Enter end date"><br><br>
                             <input type="submit" name="submit" class="btn btn-primary" value="{{ __('messages.Add') }}">
