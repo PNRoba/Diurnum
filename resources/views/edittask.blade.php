@@ -59,7 +59,9 @@
                 <select class="form-control" name="name1" id="name1">
                 <option value="{{ $keyid->name }}" style="background:{{ $keyid->color }}">{{ $keyid->name }}</option>
                 @foreach($keywords as $keyword)
-                    @if(Auth::user()->id == $keyword->user_id && $keyid->id != $keyword->id)
+                    @if($user->roles_id == 1)
+                        <option value="{{ $keyword->name }}" style="background:{{ $keyword->color }}">{{ $keyword->name }}</option>
+                    @elseif(Auth::user()->id == $keyword->user_id && $keyid->id != $keyword->id)
                         <option value="{{ $keyword->name }}" style="background:{{ $keyword->color }}">{{ $keyword->name }}</option>
                     @endif
                 @endforeach

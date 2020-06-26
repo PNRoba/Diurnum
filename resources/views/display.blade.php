@@ -38,13 +38,17 @@
                             <td>{{$task->title}}</td>
                             <td>
                             @foreach($keywords as $keyword)
-                                @if($keyword->user_id == Auth::user()->id && $keyword->color == $task->color)
+                                @if($user->roles_id == 1 && $keyword->color == $task->color)
+                                    {{ $keyword->name }}
+                                @elseif($keyword->user_id == Auth::user()->id && $keyword->color == $task->color)
                                     {{ $keyword->name }}
                                 @endif    
                             @endforeach
                             </td>
                             @foreach($keywords as $keyword)
-                                @if($keyword->user_id == Auth::user()->id && $keyword->color == $task->color)
+                                @if($user->roles_id == 1 && $keyword->color == $task->color)
+                                    <td style="background-color: {{ $keyword->color }};">{{$task->color}}</td>
+                                @elseif($keyword->user_id == Auth::user()->id && $keyword->color == $task->color)
                                     <td style="background-color: {{ $keyword->color }};">{{$task->color}}</td>
                                 @endif    
                             @endforeach

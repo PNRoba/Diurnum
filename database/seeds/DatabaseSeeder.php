@@ -19,5 +19,13 @@ class DatabaseSeeder extends Seeder
                   'id' => '2',
                   'status' => 'private',
          ]);
+         DB::table('users')->insert([
+                  'id' => '1',
+                  'name' => 'Admin',
+                  'username' => 'Admin',
+                  'email' => 'admin@admin.com',
+                  'password' => bcrypt('secret123'),
+                  'roles_id' => '1',
+         ]);
     }
 }

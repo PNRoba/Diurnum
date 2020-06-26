@@ -23,7 +23,36 @@ class taskControler extends Controller
         $keywords = Keyword::all();
         $publics = Publics::all();
         $task = [];
+    if($user->roles_id == 1){
+        $selectparams = array();
+        $filter = "";
+        if (array_key_exists('keyword', $_GET) && $_GET['keyword']) {
+            $selectparams[':keyword'] = $_GET['keyword']; 
+            $filter = " WHERE k.name=:keyword";
+        }
 
+        $tasks = DB::select("SELECT t.* FROM tasks t 
+            INNER JOIN calendars c ON t.id=c.tasks_id 
+            INNER JOIN keywords k ON c.keywords_id=k.id
+            INNER JOIN public p ON k.public=p.id" .  $filter, $selectparams);
+
+        foreach($tasks as $row){
+        $enddate = $row->end_date." 24:00:00";
+            $task[] = \Calendar::Event(
+            $row->title,
+            false,
+            new \DateTime($row->start_date),
+            new \DateTime($row->end_date),
+            $row->id,
+            [
+               'color' => $row->color,
+            ]
+            );
+        }
+        $calendar = \Calendar::addEvents($task);
+        return view('taskpage', ['keywords'=>$keywords, 'publics'=>$publics], compact('tasks','calendar'));
+    }
+    else{
         $selectparams = array();
         $filter = array();
         if ($user) {
@@ -61,14 +90,34 @@ class taskControler extends Controller
         $calendar = \Calendar::addEvents($task);
         return view('taskpage', ['keywords'=>$keywords, 'publics'=>$publics], compact('tasks','calendar'));
     }
+    }
     
     public function display(){
+        $user = Auth::user();
         $keywords = Keyword::all();
         $publics = Publics::all();
-        return view('addtask', ['keywords'=>$keywords, 'publics'=>$publics]);
+        return view('addtask', ['keywords'=>$keywords, 'publics'=>$publics, 'user'=> $user]);
     }
     
     public function search(Request $request){
+    $user = Auth::user();
+    if($user->roles_id == 1){
+        $search = $request->input('q');
+        if ($search) {
+            $where = " WHERE k.name LIKE :search";
+            $params = array(':search' => '%' . $search . '%');
+        }
+        else {
+            $where = '';
+            $params = array();
+        }
+        $keywords = DB::select("SELECT k.id,k.name,k.color,u.username FROM keywords k 
+            INNER JOIN users u ON k.user_id=u.id
+            INNER JOIN public p ON k.public=p.id" . $where, $params);
+
+        return view('search', ['keywords'=>$keywords, 'search' => $search]);
+    }
+    else{
         $search = $request->input('q');
         if ($search) {
             $where = " AND k.name LIKE :search";
@@ -83,6 +132,7 @@ class taskControler extends Controller
             INNER JOIN public p ON k.public=p.id WHERE p.status='public'" . $where, $params);
 
         return view('search', ['keywords'=>$keywords, 'search' => $search]);
+    }
     }
 
     /**
@@ -178,8 +228,13 @@ class taskControler extends Controller
         if (Auth::check()){
             $user = Auth::user();
             $keywords = Keyword::all();
-            $tasks = \DB::select('SELECT t.* FROM tasks t INNER JOIN calendars c ON t.id=c.tasks_id WHERE user_id=?', array($user->id));
-            return view('display',['keywords'=>$keywords, 'tasks'=>$tasks]);
+            if($user->roles_id == 1){
+                $tasks = \DB::select('SELECT t.* FROM tasks t INNER JOIN calendars c ON t.id=c.tasks_id');
+            }
+            else{
+                $tasks = \DB::select('SELECT t.* FROM tasks t INNER JOIN calendars c ON t.id=c.tasks_id WHERE user_id=?', array($user->id));
+            }
+            return view('display',['keywords'=>$keywords, 'tasks'=>$tasks, 'user'=>$user]);
         }
     }
 
@@ -192,7 +247,8 @@ class taskControler extends Controller
     public function edit($id)
     {
         if (Auth::check())
-        {   
+        {
+            $user = Auth::user();   
             $tasks = task::find($id);
             $keywords = Keyword::all();
             $publics = Publics::all();
@@ -202,7 +258,7 @@ class taskControler extends Controller
                     $keyid = Keyword::find($calendar->keywords_id);
                 }
             }
-            return view('edittask', ['keywords'=>$keywords, 'publics'=>$publics, 'keyid'=>$keyid], compact('tasks', 'id'));         
+            return view('edittask', ['keywords'=>$keywords, 'publics'=>$publics, 'keyid'=>$keyid, 'user' => $user], compact('tasks', 'id'));         
         }
         else
         {
