@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\App;
 
 class LanguageMiddleware
 {
+    const LOCALES = ['en', 'lv'];
+
     /**
      * Handle an incoming request.
      *
@@ -20,6 +22,12 @@ class LanguageMiddleware
         $lang = $request->cookie('language');
         if (!empty($lang)) {
             App::setLocale($lang);
+        }
+        else {
+            $lang = $request->getPreferredLanguage(self::LOCALES);
+            if (in_array($lang, self::LOCALES)) {
+                 App::setLocale($lang);
+            } 
         }
         return $next($request);
     }

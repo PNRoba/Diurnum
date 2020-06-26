@@ -23,7 +23,7 @@ class taskControler extends Controller
         $keywords = Keyword::all();
         $publics = Publics::all();
         $task = [];
-    if($user->roles_id == 1){
+    if($user && $user->roles_id == 1){
         $selectparams = array();
         $filter = "";
         if (array_key_exists('keyword', $_GET) && $_GET['keyword']) {
